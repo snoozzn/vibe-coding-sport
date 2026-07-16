@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "VibeSport Login Page",
+  "entry": "vibesport-login.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "primary": true,
+  "createdAt": "2026-07-16T11:41:24.806Z",
+  "updatedAt": "2026-07-16T11:41:25.037Z",
+  "sourceSkillId": "agent-browser",
+  "designSystemId": "default",
+  "metadata": {
+    "identifier": "vibesport-login",
+    "artifactType": "text/html",
+    "inferred": false
+  }
+}

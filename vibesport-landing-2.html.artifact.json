@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "VibeSport Landing Page (Polished)",
+  "entry": "vibesport-landing-2.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "primary": true,
+  "createdAt": "2026-07-16T11:48:51.389Z",
+  "updatedAt": "2026-07-16T11:48:51.427Z",
+  "sourceSkillId": "agent-browser",
+  "designSystemId": "default",
+  "metadata": {
+    "identifier": "vibesport-landing",
+    "artifactType": "text/html",
+    "inferred": false
+  }
+}

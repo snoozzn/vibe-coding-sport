@@ -1,0 +1,333 @@
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VibeSport — 纯净的运动追踪体验</title>
+  <style>
+    :root {
+      --bg: oklch(0.96 0.01 160);
+      --surface: #ffffff;
+      --fg: oklch(0.2 0.02 160);
+      --muted: oklch(0.5 0.05 160);
+      --border: oklch(0.9 0.02 160);
+      --accent: oklch(0.82 0.18 160);
+      --accent-on: oklch(0.2 0.02 160);
+      
+      --font-display: "Inter", -apple-system, system-ui, sans-serif;
+      --font-body: "Inter", -apple-system, system-ui, sans-serif;
+      --font-mono: ui-monospace, "JetBrains Mono", monospace;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 24px;
+      
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-12: 48px;
+      --space-20: 80px;
+
+      --elev-raised: 0 4px 12px color-mix(in oklab, var(--fg), transparent 95%);
+      --focus-ring: 0 0 0 3px color-mix(in oklab, var(--accent), transparent 60%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: var(--font-body); 
+      background: var(--bg); 
+      color: var(--fg); 
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    * { transition: none !important; animation: none !important; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+
+    nav {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-6);
+      position: sticky;
+      top: 0;
+      background: rgba(250, 255, 250, 0.8);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--fg);
+    }
+
+    .brand-dot {
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .nav-links { display: flex; gap: var(--space-6); align-items: center; }
+    .nav-link { 
+      text-decoration: none; 
+      color: var(--fg); 
+      font-size: 14px; 
+      font-weight: 500;
+      opacity: 0.7;
+    }
+    .nav-link:hover { opacity: 1; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      border: 1px solid transparent;
+      letter-spacing: 0.02em;
+    }
+    .btn-primary { 
+      background: var(--accent); 
+      color: var(--accent-on); 
+      box-shadow: var(--elev-raised);
+    }
+    .btn-secondary { 
+      background: transparent; 
+      border-color: var(--border); 
+      color: var(--fg); 
+    }
+    .btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+    section { padding: var(--space-20) 0; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: var(--space-8);
+      align-items: center;
+      min-height: 60vh;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 8vw, 64px);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: var(--space-6);
+    }
+
+    .hero-sub {
+      font-size: 20px;
+      color: var(--muted);
+      margin-bottom: var(--space-8);
+      max-width: 500px;
+      line-height: 1.5;
+    }
+
+    .ph-img {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      box-shadow: var(--elev-raised);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: var(--space-6);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: var(--space-6);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .card-main {
+      grid-column: span 1;
+      background: var(--surface);
+      border-left: 4px solid var(--accent);
+      border-right: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: var(--space-8);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--accent);
+    }
+
+    .card-title { font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
+    .card-text { color: var(--muted); font-size: 15px; }
+
+    .stats-preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-8);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-6);
+      text-align: center;
+      box-shadow: var(--elev-raised);
+    }
+
+    .stat-box .value {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--fg);
+      margin-bottom: 4px;
+    }
+    .stat-box .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+
+    .cta-section {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; text-align: center; }
+      .hero-sub { margin: 0 auto var(--space-8) auto; }
+      .features { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .stats-preview { grid-template-columns: 1fr 1fr; gap: var(--space-8); }
+      .cta-section h2 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="landing.html" class="brand" data-od-id="nav-brand"><div class="brand-dot"></div> VibeSport</a>
+    <div class="nav-links">
+      <a href="#features" class="nav-link">功能</a>
+      <a href="#stats" class="nav-link">分析</a>
+      <a href="login.html" class="btn btn-primary" data-od-id="nav-cta">开始记录</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="hero" data-od-id="hero-section">
+      <div>
+        <h1>记录每一次<br><span style="color: var(--accent)">突破自我</span></h1>
+        <p class="hero-sub">一个轻量、高效且纯净的运动打卡应用。无需复杂配置，让数据驱动你的健康进步。</p>
+        <div style="display: flex; gap: var(--space-4); justify-content: flex-start;">
+          <a href="login.html" class="btn btn-primary" data-od-id="hero-cta-main">立即加入</a>
+          <a href="#features" class="btn btn-secondary" data-od-id="hero-cta-sub">了解更多</a>
+        </div>
+      </div>
+      <div class="ph-img" data-od-id="hero-image">PROD_SHOT: APP_DASHBOARD_MOCKUP</div>
+    </section>
+
+    <section id="features" data-od-id="features-section">
+      <h2 style="text-align: center; margin-bottom: var(--space-12); font-family: var(--font-display); font-size: 32px; letter-spacing: -0.02em;">专注于核心记录</h2>
+      <div class="features">
+        <div class="card card-main" data-od-id="feature-running">
+          <div class="card-icon">KM</div>
+          <div class="card-title">专业跑步追踪</div>
+          <div class="card-text">不仅是数字。精准记录每日跑步公里数，默认当日时间，支持随笔备注，让每一公里都具有可回溯的意义。</div>
+          <div style="margin-top: auto; font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-weight: 700;">HIGH PRECISION →</div>
+        </div>
+        <div class="features-grid">
+          <div class="card" data-od-id="feature-gym">
+            <div class="card-icon">GYM</div>
+            <div class="card-title">健身打卡</div>
+            <div class="card-text">涵盖瑜伽、力量训练等多种类型，灵活记录时长或组数。</div>
+          </div>
+          <div class="card" data-od-id="feature-weight">
+            <div class="card-icon">KG</div>
+            <div class="card-title">体重管理</div>
+            <div class="card-text">每日体重快速录入，实时计算体重差值，见证体态变化。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="stats" data-od-id="stats-section">
+      <div class="stats-preview">
+        <div class="stat-box">
+          <span class="value">124.5</span>
+          <span class="label">本月总里程 (km)</span>
+        </div>
+        <div class="stat-box">
+          <span class="value">18</span>
+          <span class="label">健身天数</span>
+        </div>
+        <div class="stat-box">
+          <span class="value">-2.4</span>
+          <span class="label">体重变化 (kg)</span>
+        </div>
+        <div class="stat-box">
+          <span class="value">82%</span>
+          <span class="label">目标完成率</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section" data-od-id="final-cta-section">
+      <h2 style="font-family: var(--font-display); font-size: 32px; margin-bottom: var(--space-6); letter-spacing: -0.02em;">准备好开始你的运动之旅了吗？</h2>
+      <p style="color: var(--muted); margin-bottom: var(--space-8); font-size: 16px;">加入数千名健身爱好者，用最简单的方式记录进步。</p>
+      <a href="login.html" class="btn btn-primary" style="padding: 16px 40px; font-size: 16px;" data-od-id="final-cta-button">免费创建账户</a>
+    </section>
+  </main>
+</body>
+</html>
