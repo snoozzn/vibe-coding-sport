@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST http://localhost:8000/api/auth/register -H \"Content-Type: application/json\" -d '{\"username\":\"debuguser\",\"email\":\"debug@test.com\",\"password\":\"test12345\"}')",
+      "Bash(curl -s -X POST http://localhost:8000/api/auth/register -H \"Content-Type: application/json\" -d '{\"username\":\"test1234\",\"email\":\"test1234@vibesport.com\",\"password\":\"test12345\"}')",
+      "Bash(curl -s -X POST http://localhost:8000/api/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"test1234@vibesport.com\",\"password\":\"test12345\"}')",
+      "Bash(git -C \"e:/Vibe Coding/code/vibe-coding-sport\" status)",
+      "Bash(git -C \"e:/Vibe Coding/code/vibe-coding-sport\" add backend/ .claude/)",
+      "Bash(git -C 'e:/Vibe Coding/code/vibe-coding-sport' commit -m 'feat: 实现运动打卡App后端 \\(Python + FastAPI + SQLAlchemy + MySQL\\) *)"
+    ]
+  }
+}
