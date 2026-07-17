@@ -1,157 +1,401 @@
-# Product Requirements Document (PRD): Sports Tracking Application
-
-## 1. Project Overview
-### 1.1 Goals
-The goal of this project is to develop a lightweight, efficient, and clean sports tracking application that allows users to monitor their physical activity and health progress. The application focuses on simplicity and data-driven insights, providing users with a streamlined way to log workouts, track weight, and analyze trends over time.
-
-### 1.2 Target Audience
-- **Fitness Enthusiasts:** Individuals who regularly exercise and want a centralized place to log their progress.
-- **Beginners:** People starting their fitness journey who need a simple tool to track distance and weight without complex configurations.
-- **Health-Conscious Users:** Users focused on weight management and consistent activity monitoring.
+# 产品需求文档（PRD）：VibeSport 运动打卡追踪App
 
 ---
 
-## 2. User Personas
-### 2.1 "Runner Rick" (The Performance Tracker)
-- **Role:** Semi-professional runner.
-- **Goal:** Track daily running distance (km) and monitor long-term progress.
-- **Need:** Quick data entry after a run and a clear view of weekly/monthly distance totals.
+## 文档信息
 
-### 2.2 "Weight-Loss Wendy" (The Health Journeyer)
-- **Role:** Individual focused on weight loss and general fitness.
-- **Goal:** Log daily weight and various fitness exercises (gym, yoga, etc.).
-- **Need:** Visual reports that show weight trends and a log of different types of exercises performed.
-
----
-
-## 3. Functional Requirements
-
-### 3.1 User Management (Auth)
-- **Registration:** Users must be able to create an account using an email, username, and password.
-- **Login/Logout:** Secure authentication to access personalized data.
-- **Profile Management:** Ability to update basic user information (e.g., name, target weight).
-
-### 3.2 Data Entry
-- **Running Log:**
-    - Input field for distance in kilometers (km).
-    - Date selection (defaulting to current date).
-    - Optional notes field.
-- **Fitness Exercises Log:**
-    - Dropdown/Search for exercise type (e.g., Push-ups, Squats, Yoga).
-    - Input for duration (minutes) or sets/reps.
-    - Date selection.
-- **Weight Tracking:**
-    - Input field for weight (kg/lbs).
-    - Date selection.
-
-### 3.3 Analytics & Reporting
-- **Dashboard:** A summary view showing the most recent entries.
-- **Statistics:**
-    - Total distance run (Daily/Weekly/Monthly).
-    - Frequency of fitness exercises.
-    - Weight change over time (delta calculation).
-- **Reports:** 
-    - Simple tabular views of historical data.
-    - Trend summaries (e.g., "You ran 10% more this week than last week").
+| 字段 | 内容 |
+|---|---|
+| 产品名称 | VibeSport（运动打卡追踪） |
+| 版本号 | v1.0.0 MVP |
+| 文档状态 | 已定稿 |
+| 创建日期 | 2026-07-16 |
+| 更新日期 | 2026-07-17 |
+| 产品经理 | - |
+| 目标平台 | Web 端（v1.0）；后续扩展移动端 |
 
 ---
 
-## 4. Non-Functional Requirements
+## 1. 产品概述
 
-### 4.1 Performance
-- **Latency:** Page transitions and data submissions should occur in under 2 seconds.
-- **Scalability:** The system should handle concurrent users without degradation in performance.
+### 1.1 产品愿景
 
-### 4.2 Accessibility
-- **Compliance:** Adhere to WCAG 2.1 Level AA standards.
-- **Contrast:** Ensure high contrast between text and background for readability.
-- **Navigation:** Fully keyboard-navigable interface.
+打造一款**轻量、高效、界面清爽**的运动打卡追踪工具，帮助用户记录日常跑步、健身项目和体重数据，并通过可视化报表洞察自身健康趋势。产品坚持"少即是多"的设计理念，让数据录入快、看板一目了然、不炫技不打扰。
 
-### 4.3 Adaptability (Responsive Design)
-- **Web-First:** Optimized for desktop browsers.
-- **Mobile-Adaptive:** Use a fluid grid system (Flexbox/Grid) to ensure the UI is fully functional on smartphones and tablets.
-- **Breakpoints:** Specific layouts for Mobile (<768px), Tablet (768px-1024px), and Desktop (>1024px).
+### 1.2 产品目标
 
----
+- **数据录入极简**：用户完成运动后 30 秒内可完成打卡记录。
+- **分析直观可读**：自动汇总周/月数据，生成趋势小结，用户一眼看懂自己的进步。
+- **多端适配**：v1.0 优先 Web 端，但样式架构预留移动端适配能力，后续可平滑迁移。
+- **清爽克制**：整体 UI 走"Fresh & Clean"路线，不添加任何动画/过渡效果，做到即时响应。
 
-## 5. User Interface Design Guidelines
+### 1.3 目标用户
 
-### 5.1 Theme & Color Palette (Fresh/Clean)
-The application will use a "Fresh & Clean" aesthetic, utilizing white space and a bright, energetic accent color.
-- **Primary Color:** Mint Green or Electric Blue (representing energy and health).
-- **Secondary Color:** Soft Gray/Off-White (for backgrounds and borders).
-- **Text Color:** Dark Charcoal (for high readability).
-- **Accent Color:** Subtle Teal (for success states/links).
-
-### 5.2 Layout
-- **Navigation:** A persistent top or side navigation bar for quick access to Entry, Analytics, and Profile.
-- **Forms:** Single-column layout for mobile; multi-column for desktop to maximize space.
-- **Data Display:** Cards-based layout for statistics and reports.
-
-### 5.3 No-Animation Rule
-- **Strict Constraint:** No CSS transitions, JS animations, or sliding effects. 
-- **Interaction:** State changes (e.g., button hover, tab switching) must be instantaneous.
+| 用户画像 | 角色描述 | 核心诉求 |
+|---|---|---|
+| **"跑者阿杰"** | 业余/半专业跑者，每周跑 3-5 次 | 快速记录每次跑步公里数，查看周/月跑量汇总 |
+| **"减重小雯"** | 正在减重、关注体重变化的用户 | 每日记录体重，看到体重变化趋势曲线 |
+| **"健身达人老李"** | 常去健身房，做多种项目训练 | 记录不同类型健身项目及训练时长，回顾训练频率 |
+| **"新手小白"** | 刚开始运动、需要简单工具的人 | 不需要复杂功能，打开就能记，记完就能看 |
 
 ---
 
-## 6. Data Model / Schema Suggestions
+## 2. 功能需求
 
-### 6.1 User Table
-- `user_id` (UUID, PK)
-- `username` (String, Unique)
-- `email` (String, Unique)
-- `password_hash` (String)
-- `created_at` (Timestamp)
+### 2.1 用户管理模块（Auth）
 
-### 6.2 RunningLogs Table
-- `log_id` (UUID, PK)
-- `user_id` (UUID, FK)
-- `distance_km` (Decimal)
-- `date` (Date)
-- `notes` (Text)
+| 编号 | 功能 | 描述 | 优先级 |
+|---|---|---|---|
+| F-01 | 用户注册 | 使用邮箱 + 用户名 + 密码创建账号。邮箱需校验格式，密码不少于 8 位 | P0 |
+| F-02 | 用户登录 | 使用邮箱 + 密码登录系统，登录态通过 Session/Token 维持 | P0 |
+| F-03 | 退出登录 | 清除登录态并返回登录页 | P0 |
+| F-04 | 个人信息管理 | 用户可修改头像、昵称、目标体重等基本信息 | P2 |
 
-### 6.3 FitnessLogs Table
-- `fitness_id` (UUID, PK)
-- `user_id` (UUID, FK)
-- `exercise_type` (String)
-- `duration_minutes` (Integer)
-- `reps_sets` (String, Optional)
-- `date` (Date)
+**业务规则：**
+- 用户名：2-20 个字符，支持中英文、数字、下划线，全局唯一
+- 密码：不少于 8 位，需包含字母和数字
+- 登录失败超过 5 次，账号锁定 15 分钟
 
-### 6.4 WeightLogs Table
-- `weight_id` (UUID, PK)
-- `user_id` (UUID, FK)
-- `weight_value` (Decimal)
-- `date` (Date)
+### 2.2 运动数据录入模块
+
+#### 2.2.1 跑步记录
+
+| 编号 | 功能 | 描述 | 优先级 |
+|---|---|---|---|
+| F-05 | 录入跑步距离 | 输入框填写跑步公里数（km），支持一位小数 | P0 |
+| F-06 | 选择日期 | 日期选择器，默认当天，可回溯历史日期 | P0 |
+| F-07 | 补充备注 | 可选文本字段，记录当次感受、天气、路线等 | P1 |
+| F-08 | 编辑/删除记录 | 可修改或删除历史跑步记录 | P1 |
+
+**业务规则：**
+- 距离范围：0.1 km ~ 100 km（单次）
+- 日期不能是未来日期
+- 同一天可录入多条跑步记录
+
+#### 2.2.2 健身项目记录
+
+| 编号 | 功能 | 描述 | 优先级 |
+|---|---|---|---|
+| F-09 | 选择健身类型 | 下拉搜索/预设标签选择运动类型（如：俯卧撑、深蹲、瑜伽、举重、游泳等） | P0 |
+| F-10 | 录入时长或组数 | 输入训练时长（分钟）或组数×次数（如"4组×12次"） | P0 |
+| F-11 | 选择日期 | 同上，日期选择器 | P0 |
+| F-12 | 编辑/删除记录 | 可修改或删除历史健身记录 | P1 |
+| F-13 | 自定义健身项目 | 用户可添加预设列表中没有的运动类型 | P2 |
+
+**业务规则：**
+- 时长范围：1 分钟 ~ 480 分钟（8 小时）
+- 预设健身类型：跑步、游泳、骑行、瑜伽、力量训练、俯卧撑、深蹲、引体向上、跳绳、普拉提、拳击、篮球、足球、羽毛球、乒乓球
+
+#### 2.2.3 体重记录
+
+| 编号 | 功能 | 描述 | 优先级 |
+|---|---|---|---|
+| F-14 | 录入体重 | 输入体重数值，支持 kg/lbs 单位切换 | P0 |
+| F-15 | 选择日期 | 同上，日期选择器，默认当天 | P0 |
+| F-16 | 编辑/删除记录 | 可修改或删除历史体重记录 | P1 |
+
+**业务规则：**
+- 体重范围：20 kg ~ 500 kg（或对应 lbs）
+- 建议每日仅录入一次体重，但不做强限制
+
+### 2.3 统计分析与报表模块
+
+| 编号 | 功能 | 描述 | 优先级 |
+|---|---|---|---|
+| F-17 | 仪表盘总览 | 首页展示当日/本周关键指标卡片（今日跑步距离、本周健身次数、最新体重） | P0 |
+| F-18 | 跑步统计 | 日/周/月跑量汇总，包含总量、平均值、趋势对比（如"本周比上周多跑 10%"） | P0 |
+| F-19 | 健身频率统计 | 按周/月统计健身次数、健身类型分布饼图、总时长 | P0 |
+| F-20 | 体重变化图 | 折线图展示体重随时间变化趋势，标注最高/最低点 | P0 |
+| F-21 | 历史记录列表 | 分 tab 查看跑步/健身/体重的全部历史记录，支持日期范围筛选 | P0 |
+| F-22 | 趋势小结 | 自动生成文字小结（如"本月你已经跑了 42 公里，超过了上月同期的 35 公里"） | P1 |
+| F-23 | 数据导出 | 支持导出 CSV 格式的运动数据 | P2 |
 
 ---
 
-## 7. Roadmap / Milestones (MVP v1.0)
+## 3. 非功能需求
 
-### Milestone 1: Foundation (Weeks 1-2)
-- User registration and authentication system.
-- Basic database schema implementation.
-- Responsive layout shell (Header, Footer, Nav).
+### 3.1 性能要求
 
-### Milestone 2: Data Entry (Weeks 3-4)
-- Implementation of Running, Fitness, and Weight input forms.
-- Input validation (e.g., preventing negative distance).
-- Basic CRUD operations for logs.
+| 指标 | 目标值 |
+|---|---|
+| 首屏加载时间 | < 2 秒 |
+| 页面切换/数据提交响应 | < 1.5 秒 |
+| 图表渲染（1 年数据量） | < 2 秒 |
+| 并发用户支持 | 至少 500 并发无性能衰减 |
 
-### Milestone 3: Analytics & Reporting (Weeks 5-6)
-- Calculation logic for statistics (Totals, Averages).
-- Tabular report views.
-- Dashboard summary page.
+### 3.2 兼容性要求
 
-### Milestone 4: Polishing & QA (Weeks 7-8)
-- Final UI skinning (Fresh/Clean palette).
-- Verification of "No Animations" constraint.
-- Cross-browser and mobile responsiveness testing.
+| 维度 | 要求 |
+|---|---|
+| 浏览器 | Chrome 90+、Firefox 90+、Safari 15+、Edge 90+ |
+| 分辨率 | 适配 360px ~ 2560px 宽度 |
+
+### 3.3 可访问性
+
+- 遵循 **WCAG 2.1 Level AA** 标准
+- 文字与背景对比度满足最低 4.5:1（普通文本）/ 3:1（大文本）
+- 全键盘可导航（Tab 切换焦点、Enter 确认、Esc 关闭）
+- 表单控件均有关联 `<label>`
+
+### 3.4 安全性
+
+- 用户密码使用 bcrypt/argon2 哈希加盐存储，不可逆
+- 登录凭证通过 HTTPS 传输，使用 HttpOnly Cookie 或安全 Token
+- SQL 注入防护：使用参数化查询或 ORM
+- XSS 防护：用户输入的文本内容渲染前做转义处理
 
 ---
 
-## 8. Success Metrics (KPIs)
-- **User Retention:** Percentage of users who log data at least 3 times per week.
-- **Data Completion:** Average number of fields filled per entry (to ensure users aren't skipping notes/dates).
-- **Performance:** Average page load time < 1.5 seconds.
-- **Usability:** 0 critical UI bugs reported regarding mobile adaptability in the first month of launch.
+## 4. UI 设计规范
+
+### 4.1 设计理念 — "Fresh & Clean"
+
+整体采用**明亮、克制、干净**的视觉语言。大量留白，单一强调色，不使用任何动画/过渡/渐变特效，所有状态切换为即时响应。
+
+### 4.2 色彩系统
+
+| 角色 | 色值 | 说明 |
+|---|---|---|
+| **背景色** | `oklch(0.96 0.01 160)` / `#F5FBF7` | 近白薄荷底色调 |
+| **卡片/容器背景** | `#FFFFFF` | 纯白表面 |
+| **主文字色** | `oklch(0.2 0.02 160)` | 深炭色，高可读性 |
+| **辅助文字色** | `oklch(0.5 0.05 160)` | 次要信息、占位符 |
+| **边框色** | `oklch(0.9 0.02 160)` | 轻量分割线 |
+| **强调色（Accent）** | `oklch(0.82 0.18 160)` | 薄荷绿——按钮、选中态、链接 |
+| **强调色上层文字** | `oklch(0.2 0.02 160)` | 强调色背景上的文字 |
+
+**强调色使用原则：** 每屏最多出现两次（如一个主按钮 + 一个眉标），避免色彩滥用。
+
+### 4.3 字体
+
+| 角色 | 字体 |
+|---|---|
+| 标题/展示字体 | Inter, -apple-system, system-ui, sans-serif |
+| 正文字体 | Inter, -apple-system, system-ui, sans-serif |
+| 等宽/数字字体 | JetBrains Mono, ui-monospace, monospace |
+
+### 4.4 严格禁止动画
+
+```css
+* {
+  transition: none !important;
+  animation: none !important;
+}
+```
+
+此条为**硬性约束**。所有 button hover、tab 切换、页面跳转、图表展示均不允许任何过渡或动画效果。交互反馈通过**即时颜色/状态切换**实现（如 hover 变色、选中态加边框等）。
+
+### 4.5 响应式断点
+
+| 断点 | 宽度范围 | 布局策略 |
+|---|---|---|
+| **移动端** | < 768px | 单栏布局，侧边栏折叠为顶部汉堡菜单，表单全宽 |
+| **平板** | 768px ~ 1024px | 两栏布局，侧边栏收窄至 64px 图标模式 |
+| **桌面端** | > 1024px | 标准两栏布局，侧边栏 260px，主内容区自适应 |
+
+### 4.6 布局结构
+
+```
+┌──────────────────────────────────────┐
+│  TopNav（固定顶部）                    │
+│  Logo | 跑步 | 健身 | 体重 | 个人中心  │
+├────────┬─────────────────────────────┤
+│Sidebar │  主内容区                     │
+│  ·仪表盘│  ┌─────┐ ┌─────┐ ┌─────┐   │
+│  ·跑步  │  │KPI卡│ │KPI卡│ │KPI卡│   │
+│  ·健身  │  └─────┘ └─────┘ └─────┘   │
+│  ·体重  │  ┌──────────────────────┐   │
+│  ·报表  │  │  图表/列表区域         │   │
+│        │  └──────────────────────┘   │
+├────────┴─────────────────────────────┤
+│  Footer（简约版本号 + 版权）          │
+└──────────────────────────────────────┘
+```
+
+- **TopNav**：粘性定位，高度 64px，提供核心功能入口
+- **Sidebar**：桌面端固定左侧 260px，当前页高亮强调色左边框
+- **内容区**：卡片式布局（Card UI），KPI 指标卡 + 图表/列表上下排布
+- **移动端**：Sidebar 隐藏，TopNav 集成汉堡菜单
+
+### 4.7 关键页面清单
+
+| 页面 | 路由 | 说明 |
+|---|---|---|
+| 落地页 | `/` | 产品介绍、功能亮点、CTA 引导注册 |
+| 登录页 | `/login` | 居中卡片，邮箱+密码表单，注册链接 |
+| 注册页 | `/register` | 居中卡片，用户名+邮箱+密码表单 |
+| 仪表盘 | `/dashboard` | KPI 概览卡片 + 最近记录列表 |
+| 跑步记录 | `/running` | 跑步数据录入表单 + 跑步历史列表 |
+| 健身记录 | `/fitness` | 健身项目录入表单 + 健身历史列表 |
+| 体重记录 | `/weight` | 体重录入表单 + 体重变化图 |
+| 统计分析 | `/analytics` | 图表报表区（跑步趋势、健身分布、体重曲线） |
+| 个人中心 | `/profile` | 个人信息编辑、目标设定、密码修改 |
+
+---
+
+## 5. 数据模型
+
+### 5.1 User（用户表）
+
+| 字段名 | 类型 | 约束 | 说明 |
+|---|---|---|---|
+| `user_id` | UUID | PK | 用户唯一标识 |
+| `username` | VARCHAR(20) | UNIQUE, NOT NULL | 用户名 |
+| `email` | VARCHAR(255) | UNIQUE, NOT NULL | 邮箱地址 |
+| `password_hash` | VARCHAR(255) | NOT NULL | 密码哈希值 |
+| `avatar_url` | VARCHAR(500) | NULLABLE | 头像链接 |
+| `target_weight_kg` | DECIMAL(5,1) | NULLABLE | 目标体重（kg） |
+| `created_at` | TIMESTAMP | NOT NULL, DEFAULT NOW() | 注册时间 |
+| `updated_at` | TIMESTAMP | NOT NULL, DEFAULT NOW() | 最后更新时间 |
+
+### 5.2 RunningLog（跑步记录表）
+
+| 字段名 | 类型 | 约束 | 说明 |
+|---|---|---|---|
+| `log_id` | UUID | PK | 记录唯一标识 |
+| `user_id` | UUID | FK → User | 所属用户 |
+| `distance_km` | DECIMAL(5,1) | NOT NULL, CHECK(>0 AND <=100) | 跑步距离（公里） |
+| `log_date` | DATE | NOT NULL | 运动日期 |
+| `notes` | TEXT | NULLABLE | 备注 |
+| `created_at` | TIMESTAMP | NOT NULL, DEFAULT NOW() | 创建时间 |
+
+### 5.3 FitnessLog（健身记录表）
+
+| 字段名 | 类型 | 约束 | 说明 |
+|---|---|---|---|
+| `fitness_id` | UUID | PK | 记录唯一标识 |
+| `user_id` | UUID | FK → User | 所属用户 |
+| `exercise_type` | VARCHAR(100) | NOT NULL | 运动类型 |
+| `duration_minutes` | INTEGER | CHECK(>=1 AND <=480) | 训练时长（分钟） |
+| `reps_sets` | VARCHAR(50) | NULLABLE | 组数×次数，如"4×12" |
+| `log_date` | DATE | NOT NULL | 运动日期 |
+| `notes` | TEXT | NULLABLE | 备注 |
+| `created_at` | TIMESTAMP | NOT NULL, DEFAULT NOW() | 创建时间 |
+
+### 5.4 WeightLog（体重记录表）
+
+| 字段名 | 类型 | 约束 | 说明 |
+|---|---|---|---|
+| `weight_id` | UUID | PK | 记录唯一标识 |
+| `user_id` | UUID | FK → User | 所属用户 |
+| `weight_value` | DECIMAL(5,1) | NOT NULL, CHECK(>=20 AND <=500) | 体重数值 |
+| `unit` | VARCHAR(3) | NOT NULL, DEFAULT 'kg' | 单位：kg / lbs |
+| `log_date` | DATE | NOT NULL | 记录日期 |
+| `notes` | TEXT | NULLABLE | 备注 |
+| `created_at` | TIMESTAMP | NOT NULL, DEFAULT NOW() | 创建时间 |
+
+---
+
+## 6. 技术方案建议（v1.0 Web 端）
+
+### 6.1 技术栈推荐
+
+| 层级 | 技术选项 | 说明 |
+|---|---|---|
+| 前端框架 | React 18+ / Vue 3+ | 组件化开发，便于后续复用至移动端 |
+| UI 组件库 | 自建组件（基于设计规范） | 避免第三方组件库引入动画，保持完全控制 |
+| 图表库 | Chart.js 或 Recharts | 纯 SVG/Canvas 渲染，禁用动画配置即可 |
+| 状态管理 | React Context + useReducer / Pinia | 轻量级，不引入额外复杂度 |
+| 后端框架 | Node.js + Express / Koa | 与现有 package.json（CommonJS）一致 |
+| 数据库 | PostgreSQL | 支持 UUID、Decimal 类型、强大的日期函数 |
+| ORM | Prisma / Knex.js | 类型安全 / 灵活查询 |
+| 认证 | JWT（Access + Refresh Token） | 无状态，便于扩展 |
+| 部署 | Docker + Nginx 反向代理 | 容器化，便于 CI/CD |
+| 移动端后续 | React Native / PWA | 复用 React 组件逻辑；或打包 PWA 快速适配 |
+
+### 6.2 项目结构建议
+
+```
+vibe-coding-sport/
+├── client/                  # 前端代码
+│   ├── src/
+│   │   ├── components/      # 通用组件（Card, Button, Input, Nav, Sidebar）
+│   │   ├── pages/           # 页面组件
+│   │   ├── hooks/           # 自定义 Hooks
+│   │   ├── styles/          # 全局样式 + 设计 Token
+│   │   └── utils/           # 工具函数（日期格式化、单位转换等）
+│   └── index.html
+├── server/                  # 后端代码
+│   ├── src/
+│   │   ├── routes/          # API 路由
+│   │   ├── controllers/     # 请求处理
+│   │   ├── models/          # 数据模型
+│   │   ├── middleware/       # 认证、校验中间件
+│   │   └── utils/           # 工具函数
+│   └── index.js             # 入口
+├── database/
+│   └── migrations/          # 数据库迁移脚本
+├── PRD.md                   # 本文档
+└── package.json
+```
+
+---
+
+## 7. MVP 里程碑规划
+
+### Milestone 1：基础搭建（第 1-2 周）
+
+- [ ] 项目脚手架搭建（前后端工程化）
+- [ ] 数据库 schema 设计及迁移
+- [ ] 用户注册/登录/登出 API 开发
+- [ ] 登录、注册页面 UI
+- [ ] 响应式页面框架（TopNav + Sidebar + 内容区）
+
+### Milestone 2：数据录入（第 3-4 周）
+
+- [ ] 跑步记录 CRUD API + 前端页面
+- [ ] 健身记录 CRUD API + 前端页面
+- [ ] 体重记录 CRUD API + 前端页面
+- [ ] 输入校验与错误提示
+- [ ] 仪表盘 KPI 概览
+
+### Milestone 3：统计分析（第 5-6 周）
+
+- [ ] 跑步日/周/月统计计算逻辑
+- [ ] 健身频率与类型分布统计
+- [ ] 体重变化趋势计算
+- [ ] 图表渲染（折线图、饼图、柱状图——均禁用动画）
+- [ ] 历史记录列表（分 tab + 日期筛选）
+- [ ] 趋势文字小结
+
+### Milestone 4：打磨与 QA（第 7-8 周）
+
+- [ ] 整体 UI 视觉走查，"Fresh & Clean" 终稿
+- [ ] 严格检查"无动画"约束（全局 `transition/animation: none`）
+- [ ] WCAG 2.1 AA 可访问性检查
+- [ ] 跨浏览器兼容性测试（Chrome/Firefox/Safari/Edge）
+- [ ] 移动端/平板响应式断点测试
+- [ ] 性能测试（首屏加载、接口响应时间）
+
+---
+
+## 8. 成功指标（KPI）
+
+| 指标 | 目标 | 衡量方式 |
+|---|---|---|
+| **周活跃留存率** | ≥ 60% 用户每周至少打卡 3 次 | 数据库查询活跃用户占比 |
+| **打卡完成率** | 单次打卡平均耗时 < 30 秒 | 前端埋点统计表单提交时间 |
+| **页面性能** | 首屏加载 < 1.5 秒 | Lighthouse Performance Score ≥ 90 |
+| **移动端适配** | 无移动端严重 UI Bug | QA 测试报告，移动端 0 个 P0/P1 Bug |
+| **用户满意度** | NPS ≥ 40 | 上线后 1 个月用户调研 |
+
+---
+
+## 9. 附录
+
+### 9.1 术语表
+
+| 术语 | 说明 |
+|---|---|
+| KPI 卡片 | 仪表盘中展示关键指标的小型数据卡片（如"今日跑量 5.2 km"） |
+| Fresh & Clean | 本产品设计风格代号：明亮、留白、薄荷绿强调、无动画 |
+| 打卡 | 用户记录一次运动/体重数据的行为 |
+
+### 9.2 参考
+
+- WCAG 2.1: https://www.w3.org/TR/WCAG21/
+- OKLCH 颜色空间: https://oklch.com/
+
+---
+
+> **文档结束** — 本文档为 VibeSport v1.0 的权威需求来源，所有功能开发、UI 设计、测试用例均应对齐本文档。

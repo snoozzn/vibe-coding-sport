@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>健身记录 · VibeSport</title>
+  <style>
+    :root {
+      --bg:      oklch(0.96 0.01 160);
+      --surface: #ffffff;
+      --fg:      oklch(0.2 0.02 160);
+      --muted:   oklch(0.5 0.05 160);
+      --border:  oklch(0.9 0.02 160);
+      --accent:  oklch(0.82 0.18 160);
+      --accent-on: oklch(0.2 0.02 160);
+      --danger:  #dc2626;
+      --accent-soft: color-mix(in oklch, var(--accent) 20%, transparent);
+      --fg-soft:     color-mix(in oklch, var(--fg) 5%, transparent);
+      --font-body: 'Inter', -apple-system, system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius: 10px;
+      --radius-lg: 14px;
+      --sidebar-w: 248px;
+      --topnav-h: 60px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      transition: none !important;
+      animation: none !important;
+    }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    input, select, textarea { font: inherit; }
+
+    .topnav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      height: var(--topnav-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 24px;
+    }
+    .topnav .brand { display: flex; align-items: center; gap: 10px; }
+    .topnav .brand-dot { width: 12px; height: 12px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+    .topnav .logo { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+    .topnav-spacer { flex: 1; }
+    .topnav .user-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 14px; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 999px;
+      font-size: 13px; font-weight: 500;
+    }
+    .topnav .user-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent-soft);
+      display: grid; place-items: center;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--accent);
+    }
+
+    .sidebar {
+      position: fixed; top: var(--topnav-h); left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 20px 12px; overflow-y: auto; z-index: 10;
+    }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border-radius: var(--radius);
+      font-size: 14px; font-weight: 500; color: var(--fg);
+      border-left: 3px solid transparent;
+    }
+    .sidebar-nav a:hover { background: var(--fg-soft); }
+    .sidebar-nav a.active { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); }
+    .sidebar-nav .nav-icon { width: 22px; height: 22px; display: grid; place-items: center; flex-shrink: 0; }
+    .sidebar-nav .nav-icon svg { width: 18px; height: 18px; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 14px; }
+    .sidebar-section-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding: 4px 14px 8px; }
+
+    .main {
+      margin-left: var(--sidebar-w);
+      margin-top: var(--topnav-h);
+      padding: 32px;
+      min-height: calc(100vh - var(--topnav-h));
+    }
+
+    .page-title { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
+    .page-sub { font-size: 13px; color: var(--muted); margin: 0 0 28px; }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      position: sticky; top: calc(var(--topnav-h) + 24px);
+    }
+    .form-card h2 { font-size: 16px; font-weight: 600; margin: 0 0 18px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .field label { font-size: 13px; font-weight: 500; color: var(--fg); }
+    .input, .textarea, select.input {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--fg);
+      font-size: 14px;
+    }
+    .input::placeholder, .textarea::placeholder { color: var(--muted); }
+    .input:focus, .textarea:focus, select.input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+    .textarea { min-height: 72px; resize: vertical; line-height: 1.55; }
+
+    .row-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      padding: 11px 20px;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .btn-primary { background: var(--accent); color: var(--accent-on); border-color: var(--accent); }
+    .btn-primary:hover { background: color-mix(in oklch, var(--accent) 85%, black); }
+    .btn-ghost {
+      background: transparent; color: var(--fg); border-color: var(--border);
+      width: auto; padding: 6px 14px; font-size: 13px; font-weight: 500;
+    }
+    .btn-ghost:hover { background: var(--fg-soft); }
+    .btn-ghost.danger { color: var(--danger); border-color: transparent; }
+    .btn-ghost.danger:hover { background: color-mix(in oklch, var(--danger) 8%, transparent); }
+
+    .tag-grid {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px;
+    }
+    .tag-chip {
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+    }
+    .tag-chip:hover { border-color: var(--fg); color: var(--fg); }
+    .tag-chip.selected {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .list-header h2 { font-size: 16px; font-weight: 600; margin: 0; }
+    .list-header .count { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+
+    .fit-list { display: flex; flex-direction: column; }
+    .fit-item {
+      display: grid; grid-template-columns: 90px 1fr 120px 80px;
+      align-items: center; gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 8px;
+    }
+    .fit-date { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+    .fit-info h3 { font-size: 14px; font-weight: 600; margin: 0 0 2px; }
+    .fit-info p { font-size: 12px; color: var(--muted); margin: 0; }
+    .fit-type-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-bottom: 4px;
+    }
+    .fit-dur {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 700;
+      text-align: right;
+    }
+    .fit-dur .unit { font-size: 13px; font-weight: 400; color: var(--muted); }
+    .fit-actions { display: flex; gap: 4px; justify-content: flex-end; }
+
+    .summary-strip {
+      display: flex; gap: 24px;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+    }
+    .summary-item { display: flex; flex-direction: column; }
+    .summary-item .s-val { font-family: var(--font-mono); font-size: 22px; font-weight: 700; }
+    .summary-item .s-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    @media (max-width: 920px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 16px; }
+      .content-grid { grid-template-columns: 1fr; }
+      .form-card { position: static; }
+      .fit-item { grid-template-columns: 70px 1fr 80px; }
+      .fit-actions { display: none; }
+      .row-fields { grid-template-columns: 1fr; }
+      .summary-strip { flex-wrap: wrap; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topnav" data-od-id="topnav">
+    <span class="brand">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <span class="logo">VibeSport</span>
+    </span>
+    <span class="topnav-spacer"></span>
+    <a href="profile.html" class="user-pill">
+      <span class="user-avatar">AJ</span>
+      <span>跑者阿杰</span>
+    </a>
+  </header>
+
+  <aside class="sidebar" data-od-id="sidebar">
+    <div class="sidebar-section-label">主要</div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>仪表盘</a>
+      <a href="running.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="2"/><path d="M7 21l1.5-5 3.5 1 4-6 3 2"/></svg></span>跑步记录</a>
+      <a href="fitness.html" class="active"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 8h4l2-4 2 4h4M8 8v8M16 8v8M10 12h4"/></svg></span>健身记录</a>
+      <a href="weight.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3a4 4 0 014 4v2h4v10a2 2 0 01-2 2H6a2 2 0 01-2-2V9h4V7a4 4 0 014-4z"/></svg></span>体重记录</a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">分析</div>
+    <nav class="sidebar-nav">
+      <a href="analytics.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>统计分析</a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <nav class="sidebar-nav">
+      <a href="profile.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></span>个人中心</a>
+      <a href="login.html" style="color: var(--muted);"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></span>退出登录</a>
+    </nav>
+  </aside>
+
+  <main class="main" data-od-id="fitness-content">
+    <h1 class="page-title">健身记录</h1>
+    <p class="page-sub">记录每项训练 · 追踪运动频率</p>
+
+    <div class="summary-strip" data-od-id="fitness-summary">
+      <div class="summary-item">
+        <span class="s-val">4 次</span>
+        <span class="s-label">本周训练次数</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-val">185 min</span>
+        <span class="s-label">本周训练总时长</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-val">6 种</span>
+        <span class="s-label">本月训练类型</span>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="form-card" data-od-id="fitness-form">
+        <h2>新增健身记录</h2>
+        <form>
+          <div class="field">
+            <label>运动类型</label>
+            <div class="tag-grid">
+              <button type="button" class="tag-chip selected">力量训练</button>
+              <button type="button" class="tag-chip">游泳</button>
+              <button type="button" class="tag-chip">瑜伽</button>
+              <button type="button" class="tag-chip">骑行</button>
+              <button type="button" class="tag-chip">俯卧撑</button>
+              <button type="button" class="tag-chip">深蹲</button>
+              <button type="button" class="tag-chip">引体向上</button>
+              <button type="button" class="tag-chip">跳绳</button>
+              <button type="button" class="tag-chip">拳击</button>
+              <button type="button" class="tag-chip">篮球</button>
+              <button type="button" class="tag-chip">足球</button>
+              <button type="button" class="tag-chip">普拉提</button>
+            </div>
+          </div>
+          <div class="row-fields">
+            <div class="field">
+              <label for="duration">训练时长（分钟）</label>
+              <input id="duration" type="number" class="input" placeholder="例：45" min="1" max="480" />
+            </div>
+            <div class="field">
+              <label for="reps">组数×次数（可选）</label>
+              <input id="reps" type="text" class="input" placeholder="例：4×12" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="date">运动日期</label>
+            <input id="date" type="date" class="input" value="2026-07-17" required />
+          </div>
+          <div class="field">
+            <label for="notes">备注（可选）</label>
+            <textarea id="notes" class="textarea" placeholder="训练感受、重量、强度……"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">记录健身</button>
+        </form>
+      </div>
+
+      <div data-od-id="fitness-history">
+        <div class="list-header">
+          <h2>历史记录</h2>
+          <span class="count">共 62 条</span>
+        </div>
+        <div class="fit-list">
+          <div class="fit-item">
+            <span class="fit-date">7月16日</span>
+            <div class="fit-info">
+              <span class="fit-type-badge">力量训练</span>
+              <h3>上肢训练日</h3>
+              <p class="run-note">卧推、划船、肩推</p>
+            </div>
+            <div class="fit-dur">45 <span class="unit">分钟</span></div>
+            <div class="fit-actions">
+              <button class="btn-ghost">编辑</button>
+              <button class="btn-ghost danger">删除</button>
+            </div>
+          </div>
+          <div class="fit-item">
+            <span class="fit-date">7月14日</span>
+            <div class="fit-info">
+              <span class="fit-type-badge">游泳</span>
+              <h3>自由泳</h3>
+              <p class="run-note">1500m 连续游</p>
+            </div>
+            <div class="fit-dur">30 <span class="unit">分钟</span></div>
+            <div class="fit-actions">
+              <button class="btn-ghost">编辑</button>
+              <button class="btn-ghost danger">删除</button>
+            </div>
+          </div>
+          <div class="fit-item">
+            <span class="fit-date">7月13日</span>
+            <div class="fit-info">
+              <span class="fit-type-badge">瑜伽</span>
+              <h3>流瑜伽</h3>
+              <p class="run-note">肩颈放松重点</p>
+            </div>
+            <div class="fit-dur">60 <span class="unit">分钟</span></div>
+            <div class="fit-actions">
+              <button class="btn-ghost">编辑</button>
+              <button class="btn-ghost danger">删除</button>
+            </div>
+          </div>
+          <div class="fit-item">
+            <span class="fit-date">7月11日</span>
+            <div class="fit-info">
+              <span class="fit-type-badge">骑行</span>
+              <h3>公路骑行</h3>
+              <p class="run-note">城郊往返，配速稳定</p>
+            </div>
+            <div class="fit-dur">90 <span class="unit">分钟</span></div>
+            <div class="fit-actions">
+              <button class="btn-ghost">编辑</button>
+              <button class="btn-ghost danger">删除</button>
+            </div>
+          </div>
+          <div class="fit-item">
+            <span class="fit-date">7月10日</span>
+            <div class="fit-info">
+              <span class="fit-type-badge">力量训练</span>
+              <h3>下肢训练日</h3>
+              <p class="run-note">深蹲 4×12，硬拉 3×8</p>
+            </div>
+            <div class="fit-dur">50 <span class="unit">分钟</span></div>
+            <div class="fit-actions">
+              <button class="btn-ghost">编辑</button>
+              <button class="btn-ghost danger">删除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

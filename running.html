@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>跑步记录 · VibeSport</title>
+  <style>
+    :root {
+      --bg:      oklch(0.96 0.01 160);
+      --surface: #ffffff;
+      --fg:      oklch(0.2 0.02 160);
+      --muted:   oklch(0.5 0.05 160);
+      --border:  oklch(0.9 0.02 160);
+      --accent:  oklch(0.82 0.18 160);
+      --accent-on: oklch(0.2 0.02 160);
+      --danger:  #dc2626;
+      --accent-soft: color-mix(in oklch, var(--accent) 20%, transparent);
+      --fg-soft:     color-mix(in oklch, var(--fg) 5%, transparent);
+      --font-body: 'Inter', -apple-system, system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius: 10px;
+      --radius-lg: 14px;
+      --sidebar-w: 248px;
+      --topnav-h: 60px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      transition: none !important;
+      animation: none !important;
+    }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    input, select, textarea { font: inherit; }
+
+    /* ─── 顶部导航 ──────────────────────────────────────────────────── */
+    .topnav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      height: var(--topnav-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 24px;
+    }
+    .topnav .brand { display: flex; align-items: center; gap: 10px; }
+    .topnav .brand-dot {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .topnav .logo { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+    .topnav-spacer { flex: 1; }
+    .topnav .user-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .topnav .user-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      display: grid; place-items: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* ─── 侧边栏 ────────────────────────────────────────────────────── */
+    .sidebar {
+      position: fixed; top: var(--topnav-h); left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 20px 12px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--fg);
+      border-left: 3px solid transparent;
+    }
+    .sidebar-nav a:hover { background: var(--fg-soft); }
+    .sidebar-nav a.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+    .sidebar-nav .nav-icon {
+      width: 22px; height: 22px;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .sidebar-nav .nav-icon svg { width: 18px; height: 18px; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 14px; }
+    .sidebar-section-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 4px 14px 8px;
+    }
+
+    /* ─── 主内容区 ──────────────────────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      margin-top: var(--topnav-h);
+      padding: 32px;
+      min-height: calc(100vh - var(--topnav-h));
+    }
+
+    .page-title { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
+    .page-sub { font-size: 13px; color: var(--muted); margin: 0 0 28px; }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ─── 录入卡片 ──────────────────────────────────────────────────── */
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      position: sticky; top: calc(var(--topnav-h) + 24px);
+    }
+    .form-card h2 { font-size: 16px; font-weight: 600; margin: 0 0 18px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .field label { font-size: 13px; font-weight: 500; color: var(--fg); }
+    .input, .textarea {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--fg);
+      font-size: 14px;
+    }
+    .input::placeholder, .textarea::placeholder { color: var(--muted); }
+    .input:focus, .textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+    .textarea { min-height: 72px; resize: vertical; line-height: 1.55; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      padding: 11px 20px;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .btn-primary { background: var(--accent); color: var(--accent-on); border-color: var(--accent); }
+    .btn-primary:hover { background: color-mix(in oklch, var(--accent) 85%, black); }
+    .btn-ghost {
+      background: transparent; color: var(--fg); border-color: var(--border);
+      width: auto; padding: 6px 14px; font-size: 13px; font-weight: 500;
+    }
+    .btn-ghost:hover { background: var(--fg-soft); }
+    .btn-ghost.danger { color: var(--danger); border-color: transparent; }
+    .btn-ghost.danger:hover { background: color-mix(in oklch, var(--danger) 8%, transparent); }
+
+    /* ─── 历史列表 ──────────────────────────────────────────────────── */
+    .list-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .list-header h2 { font-size: 16px; font-weight: 600; margin: 0; }
+    .list-header .count { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+
+    .run-list { display: flex; flex-direction: column; }
+    .run-item {
+      display: grid; grid-template-columns: 90px 1fr 120px 80px;
+      align-items: center; gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 8px;
+    }
+    .run-date { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+    .run-info h3 { font-size: 14px; font-weight: 600; margin: 0 0 2px; }
+    .run-info .run-note { font-size: 12px; color: var(--muted); margin: 0; }
+    .run-dist {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 700;
+      text-align: right;
+    }
+    .run-dist .unit { font-size: 13px; font-weight: 400; color: var(--muted); }
+    .run-actions { display: flex; gap: 4px; justify-content: flex-end; }
+
+    .empty-state {
+      text-align: center; padding: 48px 20px;
+      color: var(--muted); font-size: 14px;
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    .summary-strip {
+      display: flex; gap: 24px;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+    }
+    .summary-item { display: flex; flex-direction: column; }
+    .summary-item .s-val { font-family: var(--font-mono); font-size: 22px; font-weight: 700; }
+    .summary-item .s-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ─── 移动端 ────────────────────────────────────────────────────── */
+    @media (max-width: 920px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 16px; }
+      .content-grid { grid-template-columns: 1fr; }
+      .form-card { position: static; }
+      .run-item { grid-template-columns: 70px 1fr 80px; }
+      .run-actions { display: none; }
+      .summary-strip { flex-wrap: wrap; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topnav" data-od-id="topnav">
+    <span class="brand">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <span class="logo">VibeSport</span>
+    </span>
+    <span class="topnav-spacer"></span>
+    <a href="profile.html" class="user-pill">
+      <span class="user-avatar">AJ</span>
+      <span>跑者阿杰</span>
+    </a>
+  </header>
+
+  <!-- 侧边栏（与仪表盘一致） -->
+  <aside class="sidebar" data-od-id="sidebar">
+    <div class="sidebar-section-label">主要</div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+        仪表盘
+      </a>
+      <a href="running.html" class="active">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="2"/><path d="M7 21l1.5-5 3.5 1 4-6 3 2"/></svg></span>
+        跑步记录
+      </a>
+      <a href="fitness.html">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 8h4l2-4 2 4h4M8 8v8M16 8v8M10 12h4"/></svg></span>
+        健身记录
+      </a>
+      <a href="weight.html">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3a4 4 0 014 4v2h4v10a2 2 0 01-2 2H6a2 2 0 01-2-2V9h4V7a4 4 0 014-4z"/></svg></span>
+        体重记录
+      </a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">分析</div>
+    <nav class="sidebar-nav">
+      <a href="analytics.html">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+        统计分析
+      </a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <nav class="sidebar-nav">
+      <a href="profile.html">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></span>
+        个人中心
+      </a>
+      <a href="login.html" style="color: var(--muted);">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></span>
+        退出登录
+      </a>
+    </nav>
+  </aside>
+
+  <main class="main" data-od-id="running-content">
+    <h1 class="page-title">跑步记录</h1>
+    <p class="page-sub">记录每次跑步数据 · 追踪里程变化</p>
+
+    <!-- 本周摘要 -->
+    <div class="summary-strip" data-od-id="running-summary">
+      <div class="summary-item">
+        <span class="s-val">18.6 km</span>
+        <span class="s-label">本周跑量</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-val">5 次</span>
+        <span class="s-label">本周次数</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-val">5'32"</span>
+        <span class="s-label">平均配速（估算）</span>
+      </div>
+      <div class="summary-item">
+        <span class="s-val">3.7 km</span>
+        <span class="s-label">平均单次</span>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <!-- 录入表单 -->
+      <div class="form-card" data-od-id="running-form">
+        <h2>新增跑步记录</h2>
+        <form>
+          <div class="field">
+            <label for="distance">跑步距离 (km)</label>
+            <input id="distance" type="number" class="input" placeholder="例：5.2" min="0.1" max="100" step="0.1" required />
+          </div>
+          <div class="field">
+            <label for="date">运动日期</label>
+            <input id="date" type="date" class="input" value="2026-07-17" required />
+          </div>
+          <div class="field">
+            <label for="notes">备注（可选）</label>
+            <textarea id="notes" class="textarea" placeholder="天气、路线、感受……"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">记录跑步</button>
+        </form>
+      </div>
+
+      <!-- 历史记录 -->
+      <div data-od-id="running-history">
+        <div class="list-header">
+          <h2>历史记录</h2>
+          <span class="count">共 48 条</span>
+        </div>
+        <div class="run-list">
+          <div class="run-item">
+            <span class="run-date">7月17日</span>
+            <div class="run-info">
+              <h3>晨跑 · 沿河绿道</h3>
+              <p class="run-note">天气凉爽，状态不错</p>
+            </div>
+            <div class="run-dist">5.2 <span class="unit">km</span></div>
+            <div class="run-actions">
+              <button class="btn-ghost" title="编辑">编辑</button>
+              <button class="btn-ghost danger" title="删除">删除</button>
+            </div>
+          </div>
+          <div class="run-item">
+            <span class="run-date">7月15日</span>
+            <div class="run-info">
+              <h3>夜跑 · 操场绕圈</h3>
+              <p class="run-note">配速稳定</p>
+            </div>
+            <div class="run-dist">3.8 <span class="unit">km</span></div>
+            <div class="run-actions">
+              <button class="btn-ghost" title="编辑">编辑</button>
+              <button class="btn-ghost danger" title="删除">删除</button>
+            </div>
+          </div>
+          <div class="run-item">
+            <span class="run-date">7月13日</span>
+            <div class="run-info">
+              <h3>间歇跑 · 体育公园</h3>
+              <p class="run-note">400m×8组</p>
+            </div>
+            <div class="run-dist">3.2 <span class="unit">km</span></div>
+            <div class="run-actions">
+              <button class="btn-ghost" title="编辑">编辑</button>
+              <button class="btn-ghost danger" title="删除">删除</button>
+            </div>
+          </div>
+          <div class="run-item">
+            <span class="run-date">7月12日</span>
+            <div class="run-info">
+              <h3>长距离慢跑 · 环湖路线</h3>
+              <p class="run-note">目标10km，完成</p>
+            </div>
+            <div class="run-dist">10.0 <span class="unit">km</span></div>
+            <div class="run-actions">
+              <button class="btn-ghost" title="编辑">编辑</button>
+              <button class="btn-ghost danger" title="删除">删除</button>
+            </div>
+          </div>
+          <div class="run-item">
+            <span class="run-date">7月10日</span>
+            <div class="run-info">
+              <h3>晨跑 · 小区周边</h3>
+              <p class="run-note">恢复跑，配速较慢</p>
+            </div>
+            <div class="run-dist">2.5 <span class="unit">km</span></div>
+            <div class="run-actions">
+              <button class="btn-ghost" title="编辑">编辑</button>
+              <button class="btn-ghost danger" title="删除">删除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

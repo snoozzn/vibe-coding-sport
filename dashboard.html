@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>仪表盘 · VibeSport</title>
+  <style>
+    :root {
+      --bg:      oklch(0.96 0.01 160);
+      --surface: #ffffff;
+      --fg:      oklch(0.2 0.02 160);
+      --muted:   oklch(0.5 0.05 160);
+      --border:  oklch(0.9 0.02 160);
+      --accent:  oklch(0.82 0.18 160);
+      --accent-on: oklch(0.2 0.02 160);
+      --accent-soft: color-mix(in oklch, var(--accent) 20%, transparent);
+      --fg-soft:     color-mix(in oklch, var(--fg) 5%, transparent);
+      --font-body: 'Inter', -apple-system, system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius: 10px;
+      --radius-lg: 14px;
+      --sidebar-w: 248px;
+      --topnav-h: 60px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      transition: none !important;
+      animation: none !important;
+    }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+
+    /* ─── 顶部导航 ──────────────────────────────────────────────────── */
+    .topnav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      height: var(--topnav-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 24px;
+    }
+    .topnav .brand { display: flex; align-items: center; gap: 10px; }
+    .topnav .brand-dot {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .topnav .logo { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+    .topnav-spacer { flex: 1; }
+    .topnav .user-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .topnav .user-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      display: grid; place-items: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* ─── 侧边栏 ────────────────────────────────────────────────────── */
+    .sidebar {
+      position: fixed; top: var(--topnav-h); left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 20px 12px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--fg);
+      border-left: 3px solid transparent;
+    }
+    .sidebar-nav a:hover { background: var(--fg-soft); }
+    .sidebar-nav a.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+    .sidebar-nav .nav-icon {
+      width: 22px; height: 22px;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .sidebar-nav .nav-icon svg { width: 18px; height: 18px; }
+    .sidebar-divider {
+      height: 1px; background: var(--border);
+      margin: 12px 14px;
+    }
+    .sidebar-section-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 4px 14px 8px;
+    }
+
+    /* ─── 主内容区 ──────────────────────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      margin-top: var(--topnav-h);
+      padding: 32px;
+      min-height: calc(100vh - var(--topnav-h));
+    }
+
+    .page-title { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
+    .page-sub { font-size: 13px; color: var(--muted); margin: 0 0 28px; }
+
+    /* ─── KPI 卡片 ──────────────────────────────────────────────────── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+    }
+    .kpi-card .kpi-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      margin: 0 0 8px;
+    }
+    .kpi-card .kpi-value {
+      font-family: var(--font-mono);
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .kpi-card .kpi-unit {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--muted);
+    }
+    .kpi-card .kpi-change {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    /* ─── 分段 ──────────────────────────────────────────────────────── */
+    .section-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .section-header h2 { font-size: 16px; font-weight: 600; margin: 0; }
+    .section-header a { font-size: 13px; color: var(--accent); font-weight: 500; }
+    .section-header a:hover { text-decoration: underline; }
+
+    /* ─── 记录列表 ──────────────────────────────────────────────────── */
+    .log-list { display: flex; flex-direction: column; }
+    .log-item {
+      display: grid; grid-template-columns: 100px 1fr 140px;
+      align-items: center; gap: 16px;
+      padding: 16px 0;
+      border-top: 1px solid var(--border);
+    }
+    .log-item:last-child { border-bottom: 1px solid var(--border); }
+    .log-date { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+    .log-desc { font-size: 14px; font-weight: 500; }
+    .log-type {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .log-value {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .empty-state {
+      text-align: center; padding: 48px 20px;
+      color: var(--muted); font-size: 14px;
+    }
+
+    /* ─── 移动端适配 ────────────────────────────────────────────────── */
+    @media (max-width: 920px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 16px; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .log-item { grid-template-columns: 80px 1fr; }
+      .log-value { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <header class="topnav" data-od-id="topnav">
+    <span class="brand">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <span class="logo">VibeSport</span>
+    </span>
+    <span class="topnav-spacer"></span>
+    <a href="profile.html" class="user-pill">
+      <span class="user-avatar">AJ</span>
+      <span>跑者阿杰</span>
+    </a>
+  </header>
+
+  <!-- 侧边栏 -->
+  <aside class="sidebar" data-od-id="sidebar">
+    <div class="sidebar-section-label">主要</div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="active">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </span>
+        仪表盘
+      </a>
+      <a href="running.html">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="2"/><path d="M7 21l1.5-5 3.5 1 4-6 3 2"/></svg>
+        </span>
+        跑步记录
+      </a>
+      <a href="fitness.html">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 8h4l2-4 2 4h4M8 8v8M16 8v8M10 12h4"/></svg>
+        </span>
+        健身记录
+      </a>
+      <a href="weight.html">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3a4 4 0 014 4v2h4v10a2 2 0 01-2 2H6a2 2 0 01-2-2V9h4V7a4 4 0 014-4z"/></svg>
+        </span>
+        体重记录
+      </a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">分析</div>
+    <nav class="sidebar-nav">
+      <a href="analytics.html">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </span>
+        统计分析
+      </a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <nav class="sidebar-nav">
+      <a href="profile.html">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+        </span>
+        个人中心
+      </a>
+      <a href="login.html" style="color: var(--muted);">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        </span>
+        退出登录
+      </a>
+    </nav>
+  </aside>
+
+  <!-- 主内容区 -->
+  <main class="main" data-od-id="dashboard-content">
+    <h1 class="page-title">仪表盘</h1>
+    <p class="page-sub">2026年7月17日 · 周四 · 今日概览</p>
+
+    <!-- KPI 卡片 -->
+    <div class="kpi-grid" data-od-id="kpi-cards">
+      <div class="kpi-card">
+        <p class="kpi-label">今日跑步距离</p>
+        <div class="kpi-value">5.2<span class="kpi-unit"> km</span></div>
+        <span class="kpi-change">↑ 日均 4.8 km</span>
+      </div>
+      <div class="kpi-card">
+        <p class="kpi-label">本周健身次数</p>
+        <div class="kpi-value">4<span class="kpi-unit"> 次</span></div>
+        <span class="kpi-change">已达标 · 目标 3 次/周</span>
+      </div>
+      <div class="kpi-card">
+        <p class="kpi-label">最新体重</p>
+        <div class="kpi-value">68.5<span class="kpi-unit"> kg</span></div>
+        <span class="kpi-change">↓ 较上周 -0.8 kg</span>
+      </div>
+    </div>
+
+    <!-- 最近记录 -->
+    <div class="section-header" data-od-id="recent-logs">
+      <h2>最近活动</h2>
+      <a href="analytics.html">查看全部 →</a>
+    </div>
+    <div class="log-list">
+      <div class="log-item">
+        <span class="log-date">7月17日</span>
+        <div>
+          <span class="log-type">跑步</span>
+          <div class="log-desc">晨跑 · 沿河绿道</div>
+        </div>
+        <span class="log-value">5.2 km</span>
+      </div>
+      <div class="log-item">
+        <span class="log-date">7月16日</span>
+        <div>
+          <span class="log-type">健身</span>
+          <div class="log-desc">力量训练 · 4组×12次</div>
+        </div>
+        <span class="log-value">45 分钟</span>
+      </div>
+      <div class="log-item">
+        <span class="log-date">7月16日</span>
+        <div>
+          <span class="log-type">体重</span>
+          <div class="log-desc">晨起空腹称重</div>
+        </div>
+        <span class="log-value">68.5 kg</span>
+      </div>
+      <div class="log-item">
+        <span class="log-date">7月15日</span>
+        <div>
+          <span class="log-type">跑步</span>
+          <div class="log-desc">夜跑 · 操场绕圈</div>
+        </div>
+        <span class="log-value">3.8 km</span>
+      </div>
+      <div class="log-item">
+        <span class="log-date">7月14日</span>
+        <div>
+          <span class="log-type">健身</span>
+          <div class="log-desc">游泳 · 自由泳</div>
+        </div>
+        <span class="log-value">30 分钟</span>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>登录 · VibeSport</title>
+  <style>
+    :root {
+      --bg:      oklch(0.96 0.01 160);
+      --surface: #ffffff;
+      --fg:      oklch(0.2 0.02 160);
+      --muted:   oklch(0.5 0.05 160);
+      --border:  oklch(0.9 0.02 160);
+      --accent:  oklch(0.82 0.18 160);
+      --accent-on: oklch(0.2 0.02 160);
+      --danger:  #dc2626;
+      --accent-soft: color-mix(in oklch, var(--accent) 20%, transparent);
+      --font-body: 'Inter', -apple-system, system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      transition: none !important;
+      animation: none !important;
+    }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; }
+    button { font: inherit; cursor: pointer; }
+
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 44px 36px 36px;
+      width: 100%;
+      max-width: 400px;
+      margin: 24px;
+    }
+
+    .brand-row {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 8px;
+    }
+    .brand-dot {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+
+    h1 { font-size: 24px; font-weight: 700; text-align: center; margin: 0 0 4px; }
+    .sub { text-align: center; color: var(--muted); font-size: 14px; margin: 0 0 32px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+    .field label { font-size: 13px; font-weight: 500; color: var(--fg); }
+    .input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--fg);
+      font: inherit;
+      font-size: 14px;
+    }
+    .input::placeholder { color: var(--muted); }
+    .input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 100%;
+      padding: 12px 22px;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .btn-primary { background: var(--accent); color: var(--accent-on); border-color: var(--accent); }
+    .btn-primary:hover { background: color-mix(in oklch, var(--accent) 85%, black); }
+
+    .help-text { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .divider-row { display: flex; align-items: center; gap: 12px; margin: 22px 0; }
+    .divider-row hr { flex: 1; border: 0; border-top: 1px solid var(--border); }
+    .divider-row span { font-size: 12px; color: var(--muted); flex-shrink: 0; }
+
+    .error-msg {
+      background: color-mix(in oklch, var(--danger) 8%, transparent);
+      color: color-mix(in oklch, var(--danger) 85%, black);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      margin-bottom: 18px;
+      border: 1px solid color-mix(in oklch, var(--danger) 25%, transparent);
+    }
+
+    .foot-link { text-align: center; font-size: 13px; color: var(--muted); margin-top: 28px; }
+
+    @media (max-width: 480px) {
+      .login-card { padding: 32px 24px 28px; margin: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="brand-row">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <span class="logo">VibeSport</span>
+    </div>
+    <h1>欢迎回来</h1>
+    <p class="sub">登录你的运动打卡账户</p>
+
+    <form autocomplete="on">
+      <div class="field">
+        <label for="email">邮箱地址</label>
+        <input id="email" type="email" class="input" placeholder="your@email.com" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="password">密码</label>
+        <input id="password" type="password" class="input" placeholder="输入密码" autocomplete="current-password" required minlength="8" />
+        <span class="help-text">8 位以上，需包含字母和数字</span>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="margin-top: 4px;">登录账户</button>
+    </form>
+
+    <div class="foot-link">
+      还没有账户？<a href="register.html">立即注册</a>
+    </div>
+  </div>
+</body>
+</html>

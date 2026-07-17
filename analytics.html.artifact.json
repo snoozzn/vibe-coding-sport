@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "analytics.html",
+  "entry": "analytics.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-07-17T01:38:39.960Z",
+  "updatedAt": "2026-07-17T01:38:39.960Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}
